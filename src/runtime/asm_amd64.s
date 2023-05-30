@@ -407,7 +407,7 @@ TEXT runtime·gogo(SB), NOSPLIT, $0-8
 	JMP	gogo<>(SB)
 
 TEXT gogo<>(SB), NOSPLIT, $0
-	get_tls(CX)
+	get_tls(CX)         //get_tls(r)	MOVQ TLS, r     go_tls.h
 	MOVQ	DX, g(CX)
 	MOVQ	DX, R14		// set the g register
 	MOVQ	gobuf_sp(BX), SP	// restore SP

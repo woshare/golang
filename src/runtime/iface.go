@@ -73,7 +73,7 @@ func getitab(inter *interfacetype, typ *_type, canfail bool) *itab {
 	// and thus the hash is irrelevant.
 	// Note: m.hash is _not_ the hash used for the runtime itabTable hash table.
 	m.hash = 0
-	m.init()
+	m.init() //把实现接口的具体类的方法，按接口内方法名，把具体类下的具体方法实现拷贝过去，完成初始化
 	itabAdd(m)
 	unlock(&itabLock)
 finish:
@@ -192,7 +192,7 @@ func (t *itabTableType) add(m *itab) {
 func (m *itab) init() string {
 	inter := m.inter
 	typ := m._type
-	x := typ.uncommon()
+	x := typ.uncommon() //这个应该是可以找到对应类型的方法集
 
 	// both inter and typ have method sorted by name,
 	// and interface names are unique,
@@ -217,7 +217,7 @@ imethods:
 		for ; j < nt; j++ {
 			t := &xmhdr[j]
 			tname := typ.nameOff(t.name)
-			if typ.typeOff(t.mtyp) == itype && tname.name() == iname {
+			if typ.typeOff(t.mtyp) == itype && tname.name() == iname { //当接口的类型和方法名，和对应类型的方法和类型一致，则会获取类型下的方法，设置接口下的方法
 				pkgPath := tname.pkgPath()
 				if pkgPath == "" {
 					pkgPath = typ.nameOff(x.pkgpath).name()
@@ -239,7 +239,7 @@ imethods:
 		m.fun[0] = 0
 		return iname
 	}
-	m.fun[0] = uintptr(fun0)
+	m.fun[0] = uintptr(fun0) //拥有fun0，就可以拿到接口定义下的，具体类型实现的方法
 	return ""
 }
 

@@ -116,17 +116,17 @@ func isEmpty(x uint8) bool {
 type hmap struct {
 	// Note: the format of the hmap is also encoded in cmd/compile/internal/reflectdata/reflect.go.
 	// Make sure this stays in sync with the compiler's definition.
-	count     int // # live cells == size of map.  Must be first (used by len() builtin)
+	count     int // 元素个数 # live cells == size of map.  Must be first (used by len() builtin)
 	flags     uint8
-	B         uint8  // log_2 of # of buckets (can hold up to loadFactor * 2^B items)
-	noverflow uint16 // approximate number of overflow buckets; see incrnoverflow for details
+	B         uint8  // 扩容常量相关字段B是buckets数组的长度的对数 2^B log_2 of # of buckets (can hold up to loadFactor * 2^B items)
+	noverflow uint16 // 溢出的bucket个数 approximate number of overflow buckets; see incrnoverflow for details
 	hash0     uint32 // hash seed
 
-	buckets    unsafe.Pointer // array of 2^B Buckets. may be nil if count==0.
-	oldbuckets unsafe.Pointer // previous bucket array of half the size, non-nil only when growing
-	nevacuate  uintptr        // progress counter for evacuation (buckets less than this have been evacuated)
+	buckets    unsafe.Pointer // buckets 数组指针 array of 2^B Buckets. may be nil if count==0.
+	oldbuckets unsafe.Pointer // 结构扩容的时候用于赋值的buckets数组 previous bucket array of half the size, non-nil only when growing
+	nevacuate  uintptr        // 搬迁进度 progress counter for evacuation (buckets less than this have been evacuated)
 
-	extra *mapextra // optional fields
+	extra *mapextra // 用于扩容的指针 optional fields
 }
 
 // mapextra holds fields that are not present on all maps.
